@@ -1,0 +1,36 @@
+version: "2"
+services:
+  postgres:
+    image: 'postgres'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/
+    container_name: 'fingerate-admin-db'
+    restart: 'always'
+    env_file:
+      - _database.env
+    ports:
+      - '5432:5432'
+    networks:
+      - fingerate-admin-backend
+
+  fingerate-admin-backend:
+    build:
+      context: .
+    image: fingerate-admin-backend:latest
+    container_name: fingerate-admin-backend
+    depends_on:
+      - postgres
+
+    volumes:
+      - ./src:/app/src
+      - .env:/app/.env
+    ports:
+      - '3836:3836'
+    networks:
+      - fingerate-admin-backend
+               
+networks:
+  fingerate-admin-backend:
+volumes:
+  postgres-data:
+ 
